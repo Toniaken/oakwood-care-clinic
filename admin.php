@@ -40,6 +40,10 @@ if (!isAdminLoggedIn()) {
 <?php
 exit;
 }
+
+require "db.php";
+
+$result = pg_query($conn, "SELECT * FROM appointments ORDER BY created_at DESC");
 ?>
 
 <!DOCTYPE html>
@@ -61,8 +65,40 @@ exit;
 
 <section class="booking-section">
     <h2>Appointment Requests</h2>
-    <p class="section-intro">Appointment records will appear here after the database is connected.</p>
+    <p class="section-intro">Below are appointment requests submitted through the website.</p>
+
+    <table class="admin-table">
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Appointment Type</th>
+            <th>Doctor</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Message</th>
+            <th>Created At</th>
+        </tr>
+
+        <?php while ($row = pg_fetch_assoc($result)) { ?>
+            <tr>
+                <td><?php echo htmlspecialchars($row["full_name"]); ?></td>
+                <td><?php echo htmlspecialchars($row["email"]); ?></td>
+                <td><?php echo htmlspecialchars($row["phone"]); ?></td>
+                <td><?php echo htmlspecialchars($row["appointment_type"]); ?></td>
+                <td><?php echo htmlspecialchars($row["doctor"]); ?></td>
+                <td><?php echo htmlspecialchars($row["preferred_date"]); ?></td>
+                <td><?php echo htmlspecialchars($row["preferred_time"]); ?></td>
+                <td><?php echo htmlspecialchars($row["message"]); ?></td>
+                <td><?php echo htmlspecialchars($row["created_at"]); ?></td>
+            </tr>
+        <?php } ?>
+    </table>
 </section>
 
 </body>
 </html>
+
+<?php
+pg_close($conn);
+?>
